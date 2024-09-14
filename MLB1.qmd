@@ -109,3 +109,21 @@ brewers_game_ids[1:10,c(6,1,41,51)]
 
 ```
 
+
+# game level data
+```{r}
+
+game_packs = baseballr::get_game_pks_mlb(date = "2024-09-12", level_ids = 1)
+
+brewers_order_game = get_batting_orders(game_pk = 747153) 
+ 
+# isolate brewers
+brewers_order_game <- subset(brewers_order_game, teamID == 158)
+print(brewers_order_game)
+
+mlb_probables(745208)
+game_linescore <- mlb_game_linescore(745208)
+game_linescore[1:10, c(1,3,5:10, 12:14)]
+
+```
+
