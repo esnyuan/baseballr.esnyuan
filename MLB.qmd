@@ -1,0 +1,103 @@
+#setup
+```{r}
+
+library(tidyverse)
+library(baseballr)
+
+options(scipen=999) # turn off scientific notation
+
+```
+
+
+
+
+
+#get game 
+```{r}
+mlb_game_pks("2024-08-17", level_ids = c(1))
+mlb_game_pks("2024-09-12", level_ids = c(1))
+```
+
+#game info
+```{r}
+
+# level_id refers to level of baseball, i.e: MLB
+game_packs = baseballr::get_game_pks_mlb(date = "2024-08-17", level_ids = 1)
+
+game_info = baseballr::get_game_info_sup_petti()
+
+```
+
+
+#ump info
+```{r}
+
+baseballr::get_umpire_ids_petti()
+
+```
+
+
+#batting order
+```{r}
+
+batting_order_payload = get_batting_orders(game_pk = 746190)
+batting_order_payload
+
+batting_order_payload1 = get_batting_orders(game_pk = 745208)
+batting_order_payload1
+
+```
+
+
+#probable pitchers
+```{r}
+
+probables_payload = get_probables_mlb(game_pk = 746190)
+probables_payload
+
+probables_payload1 = get_probables_mlb(game_pk = 745208)
+probables_payload1
+
+```
+
+
+#draft
+```{r}
+
+draft_payload = baseballr::get_draft_mlb(2010)
+
+```
+
+
+#non-pitch events
+```{r}
+game_packs_final = game_packs %>%
+  filter(status.detailedState == 'Final') %>%
+  pull(game_pk)
+
+payload = map_df(.x = game_packs_final,
+                        ~baseballr::get_pbp_mlb(game_pk = .x)) 
+# .x looping over game_packs_final
+# function of get pitch by pitch, 
+# argument of continue until all 11 values in game_pk are used
+
+non_pitch_events = payload %>% 
+  filter(isPitch == FALSE)
+ab_with_mound_visit = non_pitch_events%>%
+  filter(str_detect(details.description, "Mound"))%>%
+  mutate(mound_visit = 1) %>%
+  select(game_pk, atBatIndex, matchup.batter.fullName, mound_visit)
+
+payload_w_mound <- payload %>%
+  left_join(ab_with_mound_visit,
+            by = c('game_pk', 'atBatIndex', 'matchup.batter.fullName'))%>%
+  mutate(mound_visit = case_when(mound_visit == 1 ~ 1,
+                                 TRUE ~ 0)) %>%
+  mutate(mound_visit = factor(mound_visit, levels = c(0,1)))
+
+```
+
+
+
+
+
