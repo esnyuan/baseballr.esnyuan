@@ -1,0 +1,111 @@
+#setup
+```{r}
+
+library(tidyverse)
+library(baseballr)
+
+options(scipen=999) # turn off scientific notation
+
+# Installing pacman package, if not already installed 
+install.packages("pacman")
+
+# Function to download package 'baseballr' from Bill Petti's GitHub site 
+pacman::p_load_current_gh("billpetti/baseballr")
+
+```
+
+
+# player data
+```{r}
+
+# Getting Player data stored to object called 'players'
+players <- chadwick_player_lu()
+
+
+# Showing top 10 entries, selected columns (to keep example compact)
+head(players[,c(13,15,27)],10)
+
+
+# player lookup
+playername_lookup(592885)
+playerid_lookup("Chourio", "Jackson Bryan")
+
+```
+
+
+# stats lookup 
+```{r}
+
+# seasonal leaderboard
+season_bat_board <- fg_batter_leaders(startseason = "2024", endseason = "2024", sortstat = "WAR")
+season_bat_board[1:10, c(6, 12, 70)]
+
+
+# statcast leaderboard
+pitcher_statboard_24 <- statcast_leaderboards(leaderboard = "exit_velocity_barrels", 
+                                              year = 2024, abs = 50, player_type = "pitcher")
+pitcher_statboard_24 [1:10,c(2,3,4,5,8,12)]
+
+
+# player batting - OHTANI 2024
+fg_batter_game_logs(playerid = 19755, year = 2024)
+
+```
+
+
+# game level data
+```{r}
+
+# call all MLB games on certain date
+gameids = mlb_game_pks("2024-09-12", level_ids = 1)
+gameids[,c(1,50,42,46,47,40,32,36,37)]
+
+```
+
+
+# compiling multiple game id'ers
+```{r}
+
+# establish parameters; loop designed to adapt if values change
+start_year <- 2023
+end_year <- 2023
+start_mo <- 3   # March  
+end_mo <- 4  # October 
+start_day <- 30
+end_day <- 30
+ 
+# format dates 
+start_date_str <- sprintf("%04d-%02d-%02d", start_year, start_mo, start_day)
+end_date_str <- sprintf("%04d-%02d-%02d", end_year, end_mo, end_day)
+ 
+# convert string representations to date objects 
+start_date <- as.Date(start_date_str)
+end_date <- as.Date(end_date_str)
+ 
+# generate a sequence of dates from start to end
+date_seq <- seq.Date(from = start_date, to = end_date, by = "day")
+game_ids <-data.frame()
+ 
+# loop over each date to get game IDs for each data
+for(date in date_seq) {
+  datec <- as.Date(date)
+  
+  # get individual year data
+  temp <- mlb_game_pks(datec, level_ids = 1)
+  
+  # bind to game ID data table
+  game_ids <- bind_rows(game_ids, temp)
+}
+
+```
+
+
+# isolate game series 
+```{r}
+
+# isolate Brewer games 
+brewers_game_ids <- subset(game_ids, teams.away.team.id == 158 | teams.home.team.id == 158)
+brewers_game_ids[1:10,c(6,1,41,51)]
+
+```
+
