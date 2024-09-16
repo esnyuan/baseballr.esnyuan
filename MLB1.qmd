@@ -127,3 +127,29 @@ game_linescore[1:10, c(1,3,5:10, 12:14)]
 
 ```
 
+
+# iterate over multiple games
+```{r}
+
+brewers_game_pks = subset(game_ids, teams.away.team.id == 158 | teams.home.team.id == 158)
+# brewers_game_pks[1:10 , c(6,1,41,51)]
+
+
+# Creating empty data set to which we will add values in the loop
+leadoffhitters = data.frame()
+ 
+for (i in brewers_game_pks){
+  # Get batting order data for this iteration of the loop
+  gameorder = mlb_batting_orders(i)
+  
+  # Isolate brewers orders and battingorder
+  gameleadoff = subset(gameorder, battingorder == 1 & teamID == 158)
+  
+  leadoffhitters = bind_rows(leadoffhitters, gameleadoff)
+}
+ 
+# Show readers sample of rows and columns from resulting data table
+leadoffhitters[1:10, 2:3]
+
+```
+
