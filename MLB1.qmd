@@ -155,11 +155,75 @@ leadoffhitters[1:10, 2:3]
 ```
 
 
+# iterate over multiple games 1
+```{r}
+
+brewers_game_pks1 = subset(game_packs, teams.away.team.id == 158 | teams.home.team.id == 158)
+brewers_game_pks = get_batting_orders(brewers_game_pks1$game_pk, type = "starting")
+
+# Creating empty data set to which we will add values in the loop
+leadoffhitters = data.frame()
+ 
+for (i in game_packs$game_pk){
+ 
+  # Get batting order data for this iteration of the loop
+  gameorder = mlb_batting_orders(i)
+ 
+  # Isolate brewers orders and batting order
+  gameleadoff = subset(gameorder, batting_order == 1 & teamID == 158)
+
+  leadoffhitters = bind_rows(leadoffhitters, gameleadoff)
+
+}
+
+```
+
+
+# iterate over multiple games demo 
+```{r}
+
+# Creating empty data set to which we will add values in the loop
+leadoff_hitters <- data.frame()
+ 
+for (i in mets_game_pks){
+  # Get batting order data for this iteration of the loop
+  game_order <- mlb_batting_orders(i)
+  
+  # Isolate Mets orders and batting_order==1
+  game_leadoff <- subset(game_order, batting_order == 1 & teamID == 121)
+  
+  leadoff_hitters <- bind_rows(leadoff_hitters, game_leadoff)
+}
+ 
+# Show readers sample of rows and columns from resulting data table
+leadoff_hitters[1:10, 2:3]
+
+```
+
 # pitch by pitch
 ```{r}
 
-SEAvTEXpbp = mlb_pbp(745208)
+SEAvTEXpbp <- mlb_pbp(745208)
 SEAvTEXpbp[1:10, c(7, 9, 10, 103, 108, 109)]
+
+```
+
+# contract tracker
+```{r}
+
+# team payrolls 2023 
+sptrc_league_payrolls(year = 2023)
+
+# brewers payroll 2023
+sptrc_team_active_payroll("MIL", year = 2023)
+
+```
+
+
+# park info 
+```{r}
+
+fg_park(2024)
 
 ```
 
