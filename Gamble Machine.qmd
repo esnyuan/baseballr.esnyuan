@@ -1,0 +1,43 @@
+
+# setup
+```{r}
+
+library(tidyverse)
+library(baseballr)
+
+options(scipen=999)
+
+# install.packages("pacman")
+# pacman::p_load_current_gh("billpetti/baseballr")
+# devtools::install_github("BillPetti/baseballr", 
+#                         ref = "2701dc70e3734b21626161f5f260a664647f542a", 
+#                         force=TRUE)
+
+```
+
+
+# rbi over under
+```{r}
+
+players <- chadwick_player_lu()
+
+# input player name, date, probable, stadium roof type
+# playerid_lookup("Yelich", "Christian")
+
+game_packs = baseballr::get_game_pks_mlb(date = "2024-09-18", level_ids = 1)
+game_info = baseballr::get_game_info_sup_petti()
+
+fg_batter_game_logs(playerid = 28806, year = 2024)
+
+
+# draw overall avg RBI pg
+# filter roof type avg
+# filter avg vs pitcher
+# compare to given line 
+# (stadium avg / avg) + (sp avg / avg)
+
+```
+
+
+
+
