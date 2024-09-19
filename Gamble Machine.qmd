@@ -13,28 +13,34 @@ options(scipen=999)
 #                         ref = "2701dc70e3734b21626161f5f260a664647f542a", 
 #                         force=TRUE)
 
+players <- chadwick_player_lu()
+
 ```
 
 
 # rbi over under
 ```{r}
 
-players <- chadwick_player_lu()
-
-# input player name, date, probable, stadium roof type
+    # input player name, date, probable, stadium roof type
 # playerid_lookup("Yelich", "Christian")
-
 game_packs = baseballr::get_game_pks_mlb(date = "2024-09-18", level_ids = 1)
 game_info = baseballr::get_game_info_sup_petti()
 
-fg_batter_game_logs(playerid = 28806, year = 2024)
 
+    # draw overall avg RBI pg
+find_rbi_ab <- fg_batter_game_logs(playerid = 28806, year = 2024)
+find_rbi_ab[1:162, c(1, 2, 11, 19)]
 
-# draw overall avg RBI pg
-# filter roof type avg
-# filter avg vs pitcher
-# compare to given line 
-# (stadium avg / avg) + (sp avg / avg)
+rbi_sum = summarise(find_rbi_ab, RBI)
+paste(rbi_sum)
+# mean(rbi_sum)
+
+# ab_sum = reframe(summarise(find_rbi_ab, AB))
+
+    # filter roof type avg
+    # filter avg vs pitcher
+    # compare to given line 
+    # (stadium avg / avg) + (sp avg / avg)
 
 ```
 
